@@ -9,13 +9,12 @@ services:
       POSTGRES_DB: crowdfunding
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=ja_JP.UTF-8"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
-    environment:
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=ja_JP.UTF-8"
     networks:
       - crowdfunding_network
     healthcheck:
@@ -63,7 +62,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8000/api
     depends_on:
       - backend
     networks:

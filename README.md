@@ -262,13 +262,57 @@ curl -X POST http://localhost:8000/api/sample-data/generate
 
 詳細は `README_DATA_SETUP.md` を参照してください。
 
+## Railwayへのデプロイ
+
+本アプリケーションをRailwayに完全公開モードでデプロイできます。
+
+### クイックスタート
+詳細な手順は `RAILWAY_QUICK_START.md` を参照してください。
+
+### デプロイ手順
+1. Railwayアカウントを作成
+2. PostgreSQLデータベースを追加
+3. バックエンドサービスをデプロイ（`backend/Dockerfile.prod`を使用）
+4. フロントエンドサービスをデプロイ（`frontend/Dockerfile.prod`を使用）
+5. 環境変数を設定（`.env.example.railway`を参照）
+6. データベースを初期化
+
+詳細は `RAILWAY_DEPLOY.md` を参照してください。
+
+## トラブルシューティング
+
+### バックエンドサーバーが応答しない場合
+
+`ERR_EMPTY_RESPONSE` エラーが発生する場合：
+
+1. **Docker Desktopが起動しているか確認**
+2. **バックエンドコンテナの状態を確認**:
+   ```bash
+   check-backend.bat
+   ```
+3. **バックエンドを再起動**:
+   ```bash
+   restart-backend.bat
+   ```
+   または
+   ```bash
+   docker-compose restart backend
+   ```
+4. **ログを確認**:
+   ```bash
+   docker-compose logs backend
+   ```
+
+詳細は `TROUBLESHOOTING.md` を参照してください。
+
 ## 注意事項
-- Docker Desktopが起動している必要があります
+- Docker Desktopが起動している必要があります（ローカル開発時）
 - 初回起動時はイメージのダウンロードに時間がかかります
-- ポート3000, 8000, 5432, 8081が使用可能である必要があります
+- ポート3000, 8000, 5432, 8081が使用可能である必要があります（ローカル開発時）
 - 開発環境用の設定のため、本番環境では適切な設定に変更してください
 - バックエンドの`.env`ファイルを作成する必要があります（`.env.example`を参考に）
 - サンプルデータは自動的には投入されません。上記の方法で投入してください
+- Railwayデプロイ時は、`Dockerfile.prod`を使用してください
 #   C r o w d f u n d i n g 
  
  

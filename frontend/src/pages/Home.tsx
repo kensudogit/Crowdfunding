@@ -22,8 +22,10 @@ export const Home = () => {
       } else {
         setProjects([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load projects:', error);
+      // ネットワークエラーの場合は空配列を設定（エラーメッセージは表示しない）
+      // バックエンドが起動していない場合は、空の状態メッセージが表示される
       setProjects([]);
     } finally {
       setLoading(false);
@@ -56,11 +58,16 @@ export const Home = () => {
   return (
     <div className="home">
       <h1>プロジェクト一覧</h1>
-      {projects.length === 0 ? (
+      {projects.length === 0 && !loading ? (
         <div className="empty-state">
           <p>プロジェクトがありません</p>
           <p className="empty-hint">
             サンプルデータを生成するには、<a href="/admin">管理画面</a>から「サンプルデータを生成」をクリックしてください。
+          </p>
+          <p className="empty-hint" style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#e74c3c' }}>
+            ※ バックエンドサーバーが起動していない場合は、データを取得できません。
+            <br />
+            Docker環境を起動するには、<code>start-dev.bat</code>を実行してください。
           </p>
         </div>
       ) : (

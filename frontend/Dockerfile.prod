@@ -16,8 +16,10 @@ RUN npm ci && npm cache clean --force
 COPY . .
 
 # 環境変数を設定（ビルド時に使用）
+# Railwayでは環境変数が自動的にARGとして渡される
+# ビルド時にVITE_API_URLをARGとして受け取る
 ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api}
 
 # アプリケーションをビルド
 RUN npm run build

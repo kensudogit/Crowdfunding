@@ -35,6 +35,14 @@
   margin-top: 1.5rem !important;
 }
 
+.empty-hint code {
+  background-color: #f4f4f4;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
 .empty-hint a {
   color: #2980b9;
   text-decoration: underline;
