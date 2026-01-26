@@ -23,11 +23,81 @@
 .logo {
   text-decoration: none;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  height: 50px;
+  width: auto;
+  animation: logoFloat 3s ease-in-out infinite, logoPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 8px rgba(52, 152, 219, 0.4));
+  transition: all 0.3s ease;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-6px) rotate(-3deg);
+  }
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    filter: drop-shadow(0 2px 8px rgba(52, 152, 219, 0.4)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 4px 12px rgba(52, 152, 219, 0.6)) brightness(1.1);
+  }
+}
+
+.logo:hover .logo-image {
+  animation: logoSpin 0.8s ease-in-out, logoPulse 1s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(52, 152, 219, 0.8)) brightness(1.2);
+}
+
+@keyframes logoSpin {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-8px) rotate(90deg) scale(1.15);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg) scale(1.2);
+  }
+  75% {
+    transform: translateY(-8px) rotate(270deg) scale(1.15);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg) scale(1);
+  }
 }
 
 .logo h1 {
   margin: 0;
   font-size: 1.5rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  font-weight: 600;
+}
+
+.logo:hover h1 {
+  color: #3498db;
+  text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
 }
 
 .nav {
@@ -88,4 +158,36 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .logo-image {
+    height: 40px;
+  }
+
+  .logo h1 {
+    font-size: 1.2rem;
+  }
+
+  .logo {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-image {
+    height: 35px;
+  }
+
+  .logo h1 {
+    font-size: 1rem;
+  }
+}
+
+/* アニメーションのパフォーマンス最適化 */
+.logo-image {
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }

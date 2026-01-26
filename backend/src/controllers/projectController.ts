@@ -12,7 +12,7 @@ export const getAllProjects = async (req: Request, res: Response): Promise<void>
 
     const projects = await ProjectModel.findAll(limit, offset, status);
 
-    // プロジェクト作成者情報を取得
+    // プロジェクト作成者情報と支援者数を取得
     const projectsWithCreator = await Promise.all(
       projects.map(async (project) => {
         const pool = (await import('../config/database')).default;
@@ -20,9 +20,14 @@ export const getAllProjects = async (req: Request, res: Response): Promise<void>
           'SELECT id, username, avatar_url FROM users WHERE id = $1',
           [project.creator_id]
         );
+        const pledgeCountResult = await pool.query(
+          'SELECT COUNT(*) as count FROM pledges WHERE project_id = $1',
+          [project.id]
+        );
         return {
           ...project,
           creator: creatorResult.rows[0] || null,
+          pledge_count: parseInt(pledgeCountResult.rows[0].count) || 0,
         };
       })
     );

@@ -17,9 +17,14 @@ export const Home = () => {
     try {
       setLoading(true);
       const response = await projectAPI.getAll(page, 20);
-      setProjects(response.projects);
+      if (response && response.projects) {
+        setProjects(response.projects);
+      } else {
+        setProjects([]);
+      }
     } catch (error) {
       console.error('Failed to load projects:', error);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -52,7 +57,12 @@ export const Home = () => {
     <div className="home">
       <h1>プロジェクト一覧</h1>
       {projects.length === 0 ? (
-        <p>プロジェクトがありません</p>
+        <div className="empty-state">
+          <p>プロジェクトがありません</p>
+          <p className="empty-hint">
+            サンプルデータを生成するには、<a href="/admin">管理画面</a>から「サンプルデータを生成」をクリックしてください。
+          </p>
+        </div>
       ) : (
         <div className="projects-grid">
           {projects.map((project) => (
@@ -99,9 +109,24 @@ export const Home = () => {
                     <span className="goal-amount">
                       / {formatCurrency(project.goal_amount)}
                     </span>
+                    <span className="progress-percentage">
+                      ({Math.round(calculateProgress(project.current_amount, project.goal_amount))}%)
+                    </span>
                   </div>
-                  <div className="project-days">
-                    あと {getDaysRemaining(project.end_date)} 日
+                  <div className="project-meta-info">
+                    <div className="project-days">
+                      あと {getDaysRemaining(project.end_date)} 日
+                    </div>
+                    {project.pledge_count !== undefined && (
+                      <div className="project-supporters">
+                        {project.pledge_count}人の支援者
+                      </div>
+                    )}
+                    {project.category && (
+                      <div className="project-category-badge">
+                        {project.category}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

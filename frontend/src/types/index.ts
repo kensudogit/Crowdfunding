@@ -25,6 +25,7 @@ export interface Project {
   updated_at: string;
   creator?: User;
   total_pledged?: number;
+  pledge_count?: number;
 }
 
 export interface Pledge {

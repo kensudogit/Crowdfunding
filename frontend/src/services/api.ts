@@ -31,6 +31,18 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
+    } else if (!error.response) {
+      // ネットワークエラーまたはサーバーが応答しない場合
+      console.error('Network error or server not responding:', error.message);
+      return Promise.reject({
+        ...error,
+        response: {
+          data: {
+            error: 'サーバーに接続できません。バックエンドが起動しているか確認してください。'
+          },
+          status: 503
+        }
+      });
     }
     return Promise.reject(error);
   }

@@ -15,13 +15,27 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const { username, email, password, first_name, last_name } = req.body;
 
     // 既存ユーザーチェック
-    const existingUser = await UserModel.findByEmail(email);
+    let existingUser;
+    let existingUsername;
+    try {
+      existingUser = await UserModel.findByEmail(email);
+      existingUsername = await UserModel.findByUsername(username);
+    } catch (dbError: any) {
+      console.error('Database error during user check:', dbError);
+      if (!res.headersSent) {
+        res.status(503).json({
+          error: 'Database connection error',
+          message: 'Please try again later'
+        });
+      }
+      return;
+    }
+
     if (existingUser) {
       res.status(400).json({ error: 'Email already registered' });
       return;
     }
 
-    const existingUsername = await UserModel.findByUsername(username);
     if (existingUsername) {
       res.status(400).json({ error: 'Username already taken' });
       return;
@@ -31,13 +45,25 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const password_hash = await bcrypt.hash(password, 10);
 
     // ユーザー作成
-    const user = await UserModel.create({
-      username,
-      email,
-      password_hash,
-      first_name,
-      last_name,
-    });
+    let user;
+    try {
+      user = await UserModel.create({
+        username,
+        email,
+        password_hash,
+        first_name,
+        last_name,
+      });
+    } catch (dbError: any) {
+      console.error('Database error during user creation:', dbError);
+      if (!res.headersSent) {
+        res.status(503).json({
+          error: 'Database connection error',
+          message: 'Please try again later'
+        });
+      }
+      return;
+    }
 
     // JWT生成
     const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
@@ -53,9 +79,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         last_name: user.last_name,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
   }
 };
 
@@ -70,7 +101,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { email, password } = req.body;
 
     // ユーザー検索
-    const user = await UserModel.findByEmail(email);
+    let user;
+    try {
+      user = await UserModel.findByEmail(email);
+    } catch (dbError: any) {
+      console.error('Database error during login:', dbError);
+      if (!res.headersSent) {
+        res.status(503).json({
+          error: 'Database connection error',
+          message: 'Please try again later'
+        });
+      }
+      return;
+    }
+
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
@@ -99,9 +143,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         bio: user.bio,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
   }
 };
 
@@ -125,9 +174,14 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       bio: user.bio,
       created_at: user.created_at,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Get profile error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
   }
 };
 

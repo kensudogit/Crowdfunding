@@ -14,6 +14,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=ja_JP.UTF-8"
     networks:
       - crowdfunding_network
     healthcheck:

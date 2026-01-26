@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { HelpModal } from '../HelpModal/HelpModal';
 import './Layout.css';
 
 interface LayoutProps {
@@ -21,6 +22,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <header className="header">
         <div className="container">
           <Link to="/" className="logo">
+            <img src="/PC.png" alt="Crowdfunding Logo" className="logo-image" />
             <h1>Crowdfunding</h1>
           </Link>
           <nav className="nav">
@@ -30,6 +32,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 <Link to="/projects/create">プロジェクト作成</Link>
                 <Link to="/projects/my">マイプロジェクト</Link>
                 <Link to="/pledges/my">マイ支援</Link>
+                <Link to="/admin">管理画面</Link>
                 <span className="user-info">
                   {user?.username}
                 </span>
@@ -43,6 +46,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 <Link to="/register">登録</Link>
               </>
             )}
+            <HelpModal />
           </nav>
         </div>
       </header>

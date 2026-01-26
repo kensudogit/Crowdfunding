@@ -20,7 +20,12 @@ export const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'ログインに失敗しました');
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.message ||
+                          (err.message && err.message.includes('Network') 
+                            ? 'サーバーに接続できません。バックエンドが起動しているか確認してください。'
+                            : 'ログインに失敗しました');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -39,6 +44,7 @@ export const Login = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
@@ -49,6 +55,7 @@ export const Login = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
             />
           </div>

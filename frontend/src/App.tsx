@@ -9,12 +9,18 @@ import { ProjectDetail } from './pages/ProjectDetail';
 import { CreateProject } from './pages/CreateProject';
 import { MyProjects } from './pages/MyProjects';
 import { MyPledges } from './pages/MyPledges';
+import { Admin } from './pages/Admin';
 import './App.css';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -42,6 +48,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <MyPledges />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <PrivateRoute>
+                  <Admin />
                 </PrivateRoute>
               }
             />

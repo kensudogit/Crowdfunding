@@ -32,7 +32,12 @@ export const Register = () => {
       await register(formData);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || '登録に失敗しました');
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.message ||
+                          (err.message && err.message.includes('Network') 
+                            ? 'サーバーに接続できません。バックエンドが起動しているか確認してください。'
+                            : '登録に失敗しました');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -52,6 +57,7 @@ export const Register = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
+              autoComplete="username"
               required
             />
           </div>
@@ -63,6 +69,7 @@ export const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              autoComplete="email"
               required
             />
           </div>
@@ -74,6 +81,7 @@ export const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              autoComplete="new-password"
               required
               minLength={6}
             />
@@ -86,6 +94,7 @@ export const Register = () => {
               name="first_name"
               value={formData.first_name}
               onChange={handleChange}
+              autoComplete="given-name"
             />
           </div>
           <div className="form-group">
@@ -96,6 +105,7 @@ export const Register = () => {
               name="last_name"
               value={formData.last_name}
               onChange={handleChange}
+              autoComplete="family-name"
             />
           </div>
           <button type="submit" disabled={loading} className="submit-btn">
