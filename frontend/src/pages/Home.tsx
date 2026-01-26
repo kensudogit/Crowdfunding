@@ -1,0 +1,129 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { projectAPI } from '../services/api';
+import { Project } from '../types';
+import './Home.css';
+
+export const Home = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    loadProjects();
+  }, [page]);
+
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await projectAPI.getAll(page, 20);
+      setProjects(response.projects);
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ja-JP', {
+      style: 'currency',
+      currency: 'JPY',
+    }).format(amount);
+  };
+
+  const calculateProgress = (current: number, goal: number) => {
+    return Math.min((current / goal) * 100, 100);
+  };
+
+  const getDaysRemaining = (endDate: string) => {
+    const end = new Date(endDate);
+    const now = new Date();
+    const diff = end.getTime() - now.getTime();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days > 0 ? days : 0;
+  };
+
+  if (loading) {
+    return <div className="loading">読み込み中...</div>;
+  }
+
+  return (
+    <div className="home">
+      <h1>プロジェクト一覧</h1>
+      {projects.length === 0 ? (
+        <p>プロジェクトがありません</p>
+      ) : (
+        <div className="projects-grid">
+          {projects.map((project) => (
+            <Link
+              key={project.id}
+              to={`/projects/${project.id}`}
+              className="project-card"
+            >
+              {project.image_url && (
+                <div className="project-image">
+                  <img src={project.image_url} alt={project.title} />
+                </div>
+              )}
+              <div className="project-content">
+                <h3>{project.title}</h3>
+                <p className="project-description">
+                  {project.description.substring(0, 100)}
+                  {project.description.length > 100 ? '...' : ''}
+                </p>
+                <div className="project-meta">
+                  <div className="project-creator">
+                    {project.creator?.username || 'Unknown'}
+                  </div>
+                  {project.category && (
+                    <span className="project-category">{project.category}</span>
+                  )}
+                </div>
+                <div className="project-stats">
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{
+                        width: `${calculateProgress(
+                          project.current_amount,
+                          project.goal_amount
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="project-amounts">
+                    <span className="current-amount">
+                      {formatCurrency(project.current_amount)}
+                    </span>
+                    <span className="goal-amount">
+                      / {formatCurrency(project.goal_amount)}
+                    </span>
+                  </div>
+                  <div className="project-days">
+                    あと {getDaysRemaining(project.end_date)} 日
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+      <div className="pagination">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          前へ
+        </button>
+        <span>ページ {page}</span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={projects.length < 20}
+        >
+          次へ
+        </button>
+      </div>
+    </div>
+  );
+};

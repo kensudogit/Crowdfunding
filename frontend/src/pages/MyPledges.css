@@ -1,0 +1,124 @@
+.my-pledges {
+  padding: 2rem 0;
+}
+
+.my-pledges h1 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+}
+
+.browse-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.browse-btn:hover {
+  background-color: #2980b9;
+}
+
+.pledges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pledge-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 1.5rem;
+}
+
+.pledge-thumb {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.pledge-info {
+  flex: 1;
+}
+
+.pledge-info h3 {
+  margin: 0 0 1rem 0;
+}
+
+.pledge-info h3 a {
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.pledge-info h3 a:hover {
+  color: #3498db;
+}
+
+.pledge-details {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pledge-amount {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.pledge-date {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.pledge-reward {
+  background-color: #ecf0f1;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #34495e;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .pledge-item {
+    flex-direction: column;
+  }
+
+  .pledge-thumb {
+    width: 100%;
+    height: 200px;
+  }
+}
