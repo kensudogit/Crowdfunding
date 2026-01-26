@@ -15,6 +15,12 @@ Node.js/Express + React + TypeScript + PostgreSQL を使用したDocker開発環
 
 ## 環境構築手順
 
+> **注意**: PowerShellを使用する場合、バッチファイル（`.bat`）を実行する際は `.\` を付けてください。
+> 例: `.\start-dev.bat`
+> 
+> または、PowerShellスクリプト（`.ps1`）を使用することもできます。
+> 例: `.\start-dev.ps1`
+
 ### 1. 初回セットアップ
 ```bash
 # バックエンドプロジェクトを初期化
@@ -27,11 +33,19 @@ npm install
 ```
 
 ### 2. Docker環境の起動
-```bash
-# 開発環境を起動
-start-dev.bat
 
-# または手動で起動
+**コマンドプロンプト（CMD）の場合:**
+```bash
+start-dev.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\start-dev.bat
+```
+
+**または手動で起動:**
+```bash
 docker-compose up -d
 ```
 
@@ -42,14 +56,25 @@ docker-compose up -d
 - **pgAdmin**: http://localhost:8081
 
 ### 4. 開発環境の管理
+
+**コマンドプロンプト（CMD）の場合:**
+```bash
+logs.bat
+stop-dev.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\logs.bat
+.\stop-dev.bat
+```
+
+**または手動で操作:**
 ```bash
 # ログを確認
-logs.bat
+docker-compose logs -f
 
 # 開発環境を停止
-stop-dev.bat
-
-# または手動で停止
 docker-compose down
 ```
 
@@ -126,17 +151,19 @@ start-dev.bat
 ```
 
 ### 2. 日常的な開発
+
+**コマンドプロンプト（CMD）の場合:**
 ```bash
-# 開発環境起動
 start-dev.bat
-
-# コード編集（ホットリロード対応）
-
-# ログ確認（必要に応じて）
 logs.bat
-
-# 開発終了時
 stop-dev.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\start-dev.bat
+.\logs.bat
+.\stop-dev.bat
 ```
 
 ### 3. データベース操作

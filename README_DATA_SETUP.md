@@ -8,8 +8,14 @@
 
 ### 方法1: 確認スクリプトを使用（推奨）
 
+**コマンドプロンプト（CMD）の場合:**
 ```bash
 check-db.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\check-db.bat
 ```
 
 このスクリプトで以下を確認できます：
@@ -30,8 +36,14 @@ check-db.bat
 
 ### 方法2: サンプルデータ投入スクリプト
 
+**コマンドプロンプト（CMD）の場合:**
 ```bash
 init-sample-data.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\init-sample-data.bat
 ```
 
 このスクリプトは：
@@ -42,8 +54,14 @@ init-sample-data.bat
 
 既存データをすべて削除して、サンプルデータを投入します：
 
+**コマンドプロンプト（CMD）の場合:**
 ```bash
 reset-db.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\reset-db.bat
 ```
 
 **注意**: この操作は既存のすべてのデータを削除します。
@@ -63,8 +81,14 @@ http://localhost:8000/api/sample-data/generate
 
 ### データベースコンテナが起動していない場合
 
+**コマンドプロンプト（CMD）の場合:**
 ```bash
 start-dev.bat
+```
+
+**PowerShellの場合:**
+```powershell
+.\start-dev.bat
 ```
 
 ### データが0件の場合

@@ -30,7 +30,9 @@ timeout /t 30 /nobreak > nul
 
 echo.
 echo サンプルデータSQLファイルをデータベースに投入中...
-docker exec -i crowdfunding_postgres psql -U postgres -d crowdfunding < database\init\02_sample_data.sql
+REM 絶対パスを使用して確実に実行
+cd /d "%~dp0"
+type database\init\02_sample_data.sql | docker exec -i crowdfunding_postgres psql -U postgres -d crowdfunding
 
 if %ERRORLEVEL% EQU 0 (
     echo.
