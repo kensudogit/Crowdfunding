@@ -13,7 +13,9 @@ import sampleDataRoutes from './routes/sampleDataRoutes';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 8000;
+// Railwayは自動的にPORT環境変数を設定するため、それを使用
+// ローカル開発時は8000を使用
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
 
 // ミドルウェア
 // Helmet設定を緩和（開発環境）

@@ -72,4 +72,8 @@ VITE_API_URL=https://<バックエンドのURL>/api
 
 フロントエンドのURLにアクセスして、アプリケーションが動作していることを確認してください。
 
-詳細な手順は `RAILWAY_DEPLOY.md` を参照してください。
+## 📚 詳細な手順
+
+- **ステップバイステップガイド**: `RAILWAY_DEPLOY_STEP_BY_STEP.md` （最も詳細）
+- **デプロイガイド**: `RAILWAY_DEPLOY.md` （詳細版）
+- **環境変数設定例**: `.env.example.railway`

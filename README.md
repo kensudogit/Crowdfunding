@@ -266,18 +266,35 @@ curl -X POST http://localhost:8000/api/sample-data/generate
 
 本アプリケーションをRailwayに完全公開モードでデプロイできます。
 
-### クイックスタート
-詳細な手順は `RAILWAY_QUICK_START.md` を参照してください。
+### 📚 デプロイガイド
 
-### デプロイ手順
+1. **ステップバイステップガイド**（推奨・最も詳細）:
+   - `RAILWAY_DEPLOY_STEP_BY_STEP.md` - 画面ごとの詳細な手順
+
+2. **クイックスタート**:
+   - `RAILWAY_QUICK_START.md` - 5分でデプロイ
+
+3. **詳細ガイド**:
+   - `RAILWAY_DEPLOY.md` - 詳細なデプロイ手順とトラブルシューティング
+
+4. **環境変数設定**:
+   - `railway-env-setup.md` - 環境変数の設定方法
+   - `.env.example.railway` - 環境変数の例
+
+5. **チェックリスト**:
+   - `RAILWAY_DEPLOY_CHECKLIST.md` - デプロイ確認用チェックリスト
+
+### 🚀 デプロイの流れ
+
 1. Railwayアカウントを作成
 2. PostgreSQLデータベースを追加
 3. バックエンドサービスをデプロイ（`backend/Dockerfile.prod`を使用）
 4. フロントエンドサービスをデプロイ（`frontend/Dockerfile.prod`を使用）
-5. 環境変数を設定（`.env.example.railway`を参照）
+5. 環境変数を設定（`railway-env-setup.md`を参照）
 6. データベースを初期化
+7. 動作確認
 
-詳細は `RAILWAY_DEPLOY.md` を参照してください。
+**推奨**: 初めてデプロイする場合は、`RAILWAY_DEPLOY_STEP_BY_STEP.md` を参照してください。
 
 ## トラブルシューティング
 
