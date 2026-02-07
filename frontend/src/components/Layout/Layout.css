@@ -12,20 +12,13 @@
 }
 
 .header .container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-@media (min-width: 769px) {
-  .header .container {
-    flex-wrap: nowrap;
-  }
+  gap: 0.75rem;
 }
 
 .logo {
@@ -44,7 +37,9 @@
 
 .logo-image {
   height: 50px;
-  width: auto;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
   animation: logoFloat 3s ease-in-out infinite, logoPulse 2s ease-in-out infinite;
   filter: drop-shadow(0 2px 8px rgba(52, 152, 219, 0.4));
   transition: all 0.3s ease;
@@ -100,100 +95,104 @@
 .logo h1 {
   margin: 0;
   font-size: 1.5rem;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-}
-
-.logo:hover h1 {
-  color: #3498db;
-  text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
-}
-
-.nav {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  padding: 0.5rem 0.75rem;
-  display: inline-block;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease infinite, textGlow 2s ease-in-out infinite;
+  text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+  letter-spacing: 0.05em;
   position: relative;
 }
 
-.nav a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+.logo h1::before {
+  content: 'Crowdfunding';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: blur(8px);
+  opacity: 0.6;
+  z-index: -1;
+  animation: gradientShift 4s ease infinite;
 }
 
-.nav a:active {
-  transform: translateY(0);
+.logo:hover h1 {
+  animation: gradientShift 1s ease infinite, textGlow 0.5s ease-in-out infinite, textPulse 0.6s ease-in-out infinite;
+  transform: scale(1.05);
 }
 
-.nav a.active {
-  background-color: rgba(52, 152, 219, 0.3);
-  color: #3498db;
-  font-weight: 600;
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.nav a.active:hover {
-  background-color: rgba(52, 152, 219, 0.4);
+@keyframes textGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.5)) drop-shadow(0 0 10px rgba(118, 75, 162, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.8)) drop-shadow(0 0 20px rgba(118, 75, 162, 0.5)) drop-shadow(0 0 30px rgba(79, 172, 254, 0.3));
+  }
 }
 
-.user-info {
-  color: #ecf0f1;
-  font-weight: 500;
-  white-space: nowrap;
-  margin: 0 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  display: inline-block;
+@keyframes textPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
 }
 
-.logout-btn {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 0.5rem 1.25rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  min-width: fit-content;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+/* ナビゲーション関連のスタイルはSidePanelに移動 */
 
-.logout-btn:hover {
-  background-color: #c0392b;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.logout-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.layout-with-sidepanel {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 140px);
 }
 
 .main {
   flex: 1;
   padding: 2rem 0;
+  transition: margin-left 0.3s ease;
 }
 
 .main .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+@media (min-width: 769px) {
+  .layout-with-sidepanel {
+    min-height: calc(100vh - 140px);
+  }
+
+  .main {
+    margin-left: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
 }
 
 .footer {
@@ -211,36 +210,14 @@
 }
 
 /* レスポンシブ対応 */
-@media (max-width: 1024px) {
-  .nav {
-    gap: 0.5rem;
-  }
-
-  .nav a {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.6rem;
-  }
-
-  .user-info {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.6rem;
-    margin: 0 0.25rem;
-  }
-
-  .logout-btn {
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-  }
-}
-
 @media (max-width: 768px) {
   .header .container {
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    padding: 0 0.75rem;
   }
 
   .logo-image {
     height: 40px;
+    width: 40px;
   }
 
   .logo h1 {
@@ -249,29 +226,6 @@
 
   .logo {
     gap: 0.5rem;
-  }
-
-  .nav {
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .nav a {
-    font-size: 0.85rem;
-    padding: 0.35rem 0.5rem;
-  }
-
-  .user-info {
-    font-size: 0.85rem;
-    margin: 0 0.25rem;
-    padding: 0.35rem 0.5rem;
-  }
-
-  .logout-btn {
-    padding: 0.4rem 0.9rem;
-    font-size: 0.8rem;
   }
 }
 
@@ -282,31 +236,11 @@
 
   .logo-image {
     height: 35px;
+    width: 35px;
   }
 
   .logo h1 {
     font-size: 1rem;
-  }
-
-  .nav {
-    gap: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .nav a {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.4rem;
-  }
-
-  .user-info {
-    font-size: 0.8rem;
-    margin: 0 0.25rem;
-    padding: 0.3rem 0.4rem;
-  }
-
-  .logout-btn {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.75rem;
   }
 }
 
