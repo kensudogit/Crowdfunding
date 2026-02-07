@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL データベース
   postgres:
@@ -9,7 +7,7 @@ services:
       POSTGRES_DB: crowdfunding
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=ja_JP.UTF-8"
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C.UTF-8"
     ports:
       - "5432:5432"
     volumes:

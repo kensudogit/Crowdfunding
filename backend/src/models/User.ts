@@ -21,6 +21,14 @@ export interface CreateUserData {
   last_name?: string;
 }
 
+export interface CreateUserWithHashData {
+  username: string;
+  email: string;
+  password_hash: string;
+  first_name?: string;
+  last_name?: string;
+}
+
 export class UserModel {
   static async findByEmail(email: string): Promise<User | null> {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -37,7 +45,7 @@ export class UserModel {
     return result.rows[0] || null;
   }
 
-  static async create(userData: CreateUserData & { password_hash: string }): Promise<User> {
+  static async create(userData: CreateUserWithHashData): Promise<User> {
     const result = await pool.query(
       `INSERT INTO users (username, email, password_hash, first_name, last_name)
        VALUES ($1, $2, $3, $4, $5)
