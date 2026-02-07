@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { HelpModal } from '../HelpModal/HelpModal';
 import './Layout.css';
@@ -26,13 +26,13 @@ export const Layout = ({ children }: LayoutProps) => {
             <h1>Crowdfunding</h1>
           </Link>
           <nav className="nav">
-            <Link to="/">プロジェクト一覧</Link>
+            <NavLink to="/" end>プロジェクト一覧</NavLink>
             {isAuthenticated ? (
               <>
-                <Link to="/projects/create">プロジェクト作成</Link>
-                <Link to="/projects/my">マイプロジェクト</Link>
-                <Link to="/pledges/my">マイ支援</Link>
-                <Link to="/admin">管理画面</Link>
+                <NavLink to="/projects/create">プロジェクト作成</NavLink>
+                <NavLink to="/projects/my">マイプロジェクト</NavLink>
+                <NavLink to="/pledges/my">マイ支援</NavLink>
+                <NavLink to="/admin">管理画面</NavLink>
                 <span className="user-info">
                   {user?.username}
                 </span>
@@ -42,8 +42,8 @@ export const Layout = ({ children }: LayoutProps) => {
               </>
             ) : (
               <>
-                <Link to="/login">ログイン</Link>
-                <Link to="/register">登録</Link>
+                <NavLink to="/login">ログイン</NavLink>
+                <NavLink to="/register">登録</NavLink>
               </>
             )}
             <HelpModal />
