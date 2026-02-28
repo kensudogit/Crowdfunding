@@ -1,21 +1,31 @@
 import axios from 'axios';
 
-// 環境変数からAPI URLを取得（ビルド時に設定される）
-// 環境変数が設定されている場合はそれを使用、なければデフォルト値を使用
-// 環境変数に /api が含まれていない場合は自動的に追加
-let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-
-// 環境変数が設定されているが /api が含まれていない場合は追加
-if (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.endsWith('/api')) {
-  // 末尾のスラッシュを削除してから /api を追加
-  const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, '');
-  API_URL = `${baseUrl}/api`;
+function normalizeApiUrl(url: string): string {
+  if (!url || !url.trim()) return '';
+  const base = url.trim().replace(/\/$/, '');
+  return base.endsWith('/api') ? base : `${base}/api`;
 }
 
-// デバッグ用：API URLを確認
+// ビルド時のデフォルト（本番では config.json で上書き可能）
+const defaultUrl = import.meta.env.VITE_API_URL
+  ? normalizeApiUrl(import.meta.env.VITE_API_URL)
+  : 'http://localhost:8000/api';
+
+let API_URL = defaultUrl;
+
+// 実行時に config.json で上書きする用（Railway で API_URL 環境変数を使う場合）
+export function setApiBaseUrl(url: string): void {
+  const next = normalizeApiUrl(url);
+  if (next) {
+    API_URL = next;
+    api.defaults.baseURL = API_URL;
+    if (import.meta.env.DEV) console.log('API URL (from config):', API_URL);
+  }
+}
+
+// デバッグ用
 if (import.meta.env.DEV) {
   console.log('API URL:', API_URL);
-  console.log('VITE_API_URL env:', import.meta.env.VITE_API_URL);
 }
 
 const api = axios.create({

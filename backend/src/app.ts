@@ -24,30 +24,34 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// CORS設定
+// CORS設定（本番で CORS エラーにならないよう *.up.railway.app も許可）
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // 開発環境ではすべてのオリジンを許可
     if (process.env.NODE_ENV === 'development' || !origin) {
       callback(null, true);
-    } else {
-      const allowedOrigins = [
-        process.env.FRONTEND_URL,
-        process.env.CORS_ORIGIN,
-        'http://localhost:3000',
-        'http://localhost:3001',
-      ].filter(Boolean);
-      
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, true); // 開発環境ではすべて許可
-      }
+      return;
     }
+    const allowed = [
+      process.env.FRONTEND_URL,
+      process.env.CORS_ORIGIN,
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ].filter(Boolean);
+    if (allowed.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    // Railway のフロントは *.up.railway.app なので許可
+    if (origin.endsWith('.up.railway.app')) {
+      callback(null, true);
+      return;
+    }
+    callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
