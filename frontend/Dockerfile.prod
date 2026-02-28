@@ -16,8 +16,9 @@ RUN npm ci && npm cache clean --force
 COPY . .
 
 # 環境変数を設定（ビルド時に使用）
-# Railwayでは環境変数が自動的にARGとして渡される
-# ビルド時にVITE_API_URLをARGとして受け取る
+# Railway: フロントエンドの Variables に VITE_API_URL を必ず設定すること。
+# 例: VITE_API_URL=https://あなたのバックエンド.up.railway.app （末尾の /api は不要）
+# 未設定だと API リクエストが localhost や同じオリジンに向き、405 になる。
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api}
 

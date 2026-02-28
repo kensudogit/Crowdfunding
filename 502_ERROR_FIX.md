@@ -266,3 +266,44 @@ cd C:\devlop\Crowdfunding\Crowdfunding
 3. **`TROUBLESHOOTING.md`を参照**
 
 4. **`RAILWAY_502_FIX.md`を参照**（Railwayにデプロイしている場合）
+
+---
+
+## 405 Method Not Allowed（登録・ログインができない）
+
+### 症状
+
+- 本番（Railway）で「登録に失敗しました」と表示される
+- ブラウザのコンソールに `POST .../api/auth/register 405 (Method Not Allowed)` や `POST .../api/auth/login 405 (Method Not Allowed)` が出る
+
+### 原因
+
+フロントエンド（nginx の静的配信）とバックエンド（Express API）は**別サービス**です。  
+フロントのビルド時に **API のベース URL** が未設定だったりフロントの URL のままになっていると、ログイン・登録のリクエストが**フロントと同じオリジン**に送られ、nginx が POST を受け付けず **405** になります。
+
+### 対処（Railway でフロントをデプロイしている場合）
+
+1. **バックエンドを別サービスとしてデプロイする**  
+   - バックエンド用のサービス（`backend` フォルダからデプロイ）を用意し、Postgres など必要な環境変数を設定する。
+   - デプロイ後に「Settings → Networking → Generate Domain」で URL を発行する（例: `https://crowdfunding-backend-xxxx.up.railway.app`）。
+
+2. **フロントエンドのサービスで `VITE_API_URL` を設定する**  
+   - Railway ダッシュボードで **フロントエンド** のサービスを開く。
+   - **Variables** で次を追加する（値はバックエンドの URL に置き換える）:
+     ```bash
+     VITE_API_URL=https://あなたのバックエンドのドメイン
+     ```
+     - 末尾の `/api` は不要です（コード側で付与します）。
+     - 例: `VITE_API_URL=https://crowdfunding-backend-xxxx.up.railway.app`
+
+3. **再デプロイする**  
+   - `VITE_API_URL` は**ビルド時**に埋め込まれるため、変数を追加・変更したあとでフロントエンドを**再ビルド・再デプロイ**する必要があります。
+
+4. **バックエンドの CORS**  
+   - バックエンドの環境変数で、フロントの本番 URL を許可するようにする（例: `FRONTEND_URL=https://crowdfunding-production-7caf.up.railway.app`）。  
+   - `backend` の `app.ts` では `FRONTEND_URL` / `CORS_ORIGIN` を参照しています。
+
+### 確認方法
+
+- ブラウザの開発者ツールの **Network** タブで、登録・ログイン時の POST が **バックエンドのドメイン**（`VITE_API_URL` で指定した URL）に向いているか確認する。
+- バックエンドの URL を直接開いて `https://<バックエンドURL>/api/health` が JSON で応答するか確認する。
