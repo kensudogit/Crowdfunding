@@ -142,12 +142,16 @@
 明示的に入れたい場合は、**フロントの公開 URL**（例: `https://crowdfunding-production-1caf.up.railway.app`）を **`FRONTEND_URL`** または **`CORS_ORIGIN`** に設定してください。
 
 **補足:** ブラウザで「CORS policy: No 'Access-Control-Allow-Origin' header」と出る場合:
-1. **バックエンドを最新コードで再デプロイ**（CORS 最優先・OPTIONS 明示処理済み）。
-2. **バックエンドが応答しているか確認** … 別タブで `https://crowdfunding-backend-production.up.railway.app/api/health` を開く。
-   - **JSON が返る** → バックエンドは起動している。再デプロイ後は CORS は通る想定。
-   - **502 / 接続できない / タイムアウト** → **バックエンドが落ちている**か起動に失敗しています。  
-     → **Crowdfunding-backend** の **Variables** で `DATABASE_URL`（または `DB_HOST` など）が正しく設定されているか確認。  
-     → **Deployments** → 最新デプロイの **View Logs** で起動エラー・DB 接続エラーが出ていないか確認。
+
+このメッセージは、**バックエンドが応答していない**ときにも出ます（502 やエラー応答には CORS ヘッダーが付かないため）。
+
+1. **バックエンドの URL を直接開いて確認**  
+   コンソールに表示されているバックエンドの URL をそのまま開く（例: `https://crowdfunding-backend-production.us.railway.app/api/health` や `...up.railway.app/api/health`）。
+   - **`{"status":"healthy",...}` のような JSON が表示される** → バックエンドは起動している。最新コードで再デプロイすれば CORS は通る想定です。
+   - **502 Bad Gateway / 接続できない / タイムアウト** → **バックエンドが起動していません。**
+     - **Crowdfunding-backend** → **Variables**: `DATABASE_URL` または `DB_HOST`・`DB_PORT`・`DB_NAME`・`DB_USER`・`DB_PASSWORD` が正しく設定されているか確認。
+     - **Crowdfunding-backend** → **Deployments** → 最新デプロイ → **View Logs**: 起動直後のエラーや DB 接続エラーが出ていないか確認。
+2. 上記を直したうえで、**バックエンドを再デプロイ**（push で自動デプロイされる場合は push）。
 
 ### 3. その他
 

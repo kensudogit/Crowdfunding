@@ -17,17 +17,7 @@ const app: Application = express();
 // ローカル開発時は8000を使用
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
 
-// CORS を最優先で適用（preflight 含め確実にヘッダーを返す）
-const corsOptions = {
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204,
-};
-app.use(cors(corsOptions));
-
-// preflight (OPTIONS) を確実に 204 + CORS ヘッダーで返す（cors の前に来るリクエスト対策）
+// 最優先: preflight (OPTIONS) と CORS ヘッダーを必ず付与（up.railway.app / us.railway.app 両方対応）
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin;
   if (origin) {
@@ -42,6 +32,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
   next();
 });
+
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
+}));
 
 // Helmet設定を緩和（開発環境）
 app.use(helmet({
