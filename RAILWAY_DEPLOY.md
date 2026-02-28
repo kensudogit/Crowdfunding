@@ -153,6 +153,29 @@
      - **Crowdfunding-backend** → **Deployments** → 最新デプロイ → **View Logs**: 起動直後のエラーや DB 接続エラーが出ていないか確認。
 2. 上記を直したうえで、**バックエンドを再デプロイ**（push で自動デプロイされる場合は push）。
 
+---
+
+## `/api/health` が 404 になる場合
+
+「404 Not Found」が出る = **その URL にはサーバーが応答しているが、ルートが存在しない**状態です。Crowdfunding の Express バックエンドが動いていないか、別のアプリが動いている可能性があります。
+
+**確認すること:**
+
+1. **ルート URL を開く**  
+   `https://crowdfunding-backend-production.us.railway.app/` （末尾の `/api/health` を外す）を開く。  
+   - **`{"message":"Crowdfunding API","version":"1.0.0","status":"running"}` のような JSON** が出る → バックエンドは動いている。その場合は `/api/health` も同じホストなら動くはずなので、キャッシュや別サービスで見ていないか確認。  
+   - **同じく 404** → このドメインで動いているのは **Crowdfunding の Node/Express バックエンドではない**可能性が高いです。
+
+2. **Railway の「Crowdfunding-backend」の設定**  
+   - **Settings** → **Build** または **Source**:  
+     - **Root Directory** が **`backend`**（またはリポジトリ内のバックエンドフォルダのパス）になっているか確認。  
+     - ルートのまま（空や `/`）だとリポジトリ直下がビルドされ、`backend/` の Express が動きません。  
+   - **Settings** → **Deploy**: **Start Command** が **`npm start`**（＝ `node dist/app.js`）になっているか確認。  
+   - **Dockerfile でビルドしている場合**: 使用する **Dockerfile が `backend` フォルダ内のもの**（例: `backend/Dockerfile.prod`）で、**コンテキストが `backend`** になっているか確認。
+
+3. **修正後**  
+   Root Directory を **`backend`** に変更し、**再デプロイ**する。デプロイ後、もう一度 `https://＜バックエンドのURL＞/` と `https://＜バックエンドのURL＞/api/health` を開いて JSON が返るか確認する。
+
 ### 3. その他
 
 - **`JWT_SECRET`** … 本番用のランダムな文字列を設定する（未設定時はコード内のデフォルトになるが、本番では必ず設定すること）。
