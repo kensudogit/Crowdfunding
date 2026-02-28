@@ -141,7 +141,9 @@
 バックエンドは **`FRONTEND_URL`** または **`CORS_ORIGIN`** がなくても、**`*.up.railway.app`** のオリジンは許可するようにしてあります。  
 明示的に入れたい場合は、**フロントの公開 URL**（例: `https://crowdfunding-production-1caf.up.railway.app`）を **`FRONTEND_URL`** または **`CORS_ORIGIN`** に設定してください。
 
-**補足:** ブラウザで「CORS policy: No 'Access-Control-Allow-Origin' header」と出る場合、多くの場合は **バックエンドが応答していない**（DB 接続失敗で落ちているなど）ことが原因です。まず上記「データベース接続」を確認し、バックエンドの **Deployments / Logs** でエラーが出ていないか確認してください。
+**補足:** ブラウザで「CORS policy: No 'Access-Control-Allow-Origin' header」と出る場合:
+1. **バックエンドのコードを最新にして再デプロイ**（CORS を最優先・`origin: true` に変更済みです）。
+2. **バックエンドが起動しているか確認** … 別タブで `https://crowdfunding-backend-production.up.railway.app/api/health` を開く。JSON が返ればバックエンドは動いている。502/接続できない場合は **DB 接続** と **Deployments / Logs** を確認。
 
 ### 3. その他
 

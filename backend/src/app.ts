@@ -17,44 +17,21 @@ const app: Application = express();
 // ローカル開発時は8000を使用
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
 
-// ミドルウェア
-// Helmet設定を緩和（開発環境）
-app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
-  crossOriginEmbedderPolicy: false,
-}));
-
-// CORS設定（本番で CORS エラーにならないよう *.up.railway.app も許可）
+// CORS を最優先で適用（preflight 含め確実にヘッダーを返す）
 const corsOptions = {
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    if (process.env.NODE_ENV === 'development' || !origin) {
-      callback(null, true);
-      return;
-    }
-    const allowed = [
-      process.env.FRONTEND_URL,
-      process.env.CORS_ORIGIN,
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ].filter(Boolean);
-    if (allowed.includes(origin)) {
-      callback(null, true);
-      return;
-    }
-    // Railway のフロントは *.up.railway.app なので許可
-    if (origin.endsWith('.up.railway.app')) {
-      callback(null, true);
-      return;
-    }
-    callback(null, true);
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204,
 };
-
 app.use(cors(corsOptions));
+
+// Helmet設定を緩和（開発環境）
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
