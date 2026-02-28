@@ -1,5 +1,45 @@
 # Railway デプロイ手順（Crowdfunding）
 
+## 404 と CORS が両方出るとき（まずここを確認）
+
+「登録で CORS エラー」「バックエンドに接続できません」が出る場合、**バックエンドがこのリポジトリの Express アプリとして動いていません**。以下を順に実行してください。
+
+### ステップ 1: Root Directory の設定（必須）
+
+1. Railway で **Crowdfunding-backend** サービスを開く。
+2. **Settings** → **Source** または **Build** を開く。
+3. **Root Directory** に **`backend`** を入力（未設定のままにしない）。
+4. 保存する。
+
+### ステップ 2: データベース変数の設定（必須）
+
+1. **Crowdfunding-backend** の **Variables** を開く。
+2. **`DATABASE_URL`** があるか確認。  
+   - ない場合: Postgres サービスを「接続」するか、Postgres の **Variables** で接続 URL をコピーし、**`DATABASE_URL`** として追加。
+   - または **`DB_HOST`**・**`DB_PORT`**・**`DB_NAME`**・**`DB_USER`**・**`DB_PASSWORD`** を設定（RAILWAY_DEPLOY の「バックエンドの Variables」参照）。
+
+### ステップ 3: 再デプロイと動作確認
+
+1. **Deployments** から **Redeploy** する（または変更を push して自動デプロイを待つ）。
+2. デプロイ完了後、ブラウザで **`https://crowdfunding-backend-production.up.railway.app/`** を開く（自分のバックエンド URL に読み替えてください）。
+3. **`{"message":"Crowdfunding API","version":"1.0.0","status":"running"}`** のような JSON が表示されれば、バックエンドは起動済みです。
+4. その状態でフロントの **登録** を再度試す。CORS はバックエンドのコードで対応済みのため、上記のとおり動いていれば通ります。
+
+**まだ CORS が出る場合:** 上記の URL で JSON が表示されていない（404/502/接続できない）なら、**Root Directory** と **DATABASE_URL**（または DB_*）を再度確認し、**View Logs** で起動エラーがないか確認してください。
+
+### CORS がまだ出る場合の最終確認（ブラウザで証明する）
+
+1. **バックエンドのルートを開く**  
+   `https://crowdfunding-backend-production.up.railway.app/` を新しいタブで開く。
+2. **表示を確認**
+   - **JSON**（`{"message":"Crowdfunding API",...}`）がそのまま表示される → バックエンドは動いている。この状態なら CORS も返しているはずなので、ハードリロード（Ctrl+Shift+R）や別ブラウザで登録を再試行。
+   - **「Not Found」や 404** → このドメインで動いているのは **Crowdfunding の Express ではない**。**Root Directory = `backend`** に設定して再デプロイ。
+   - **502 Bad Gateway / 接続できない** → バックエンドが落ちている。**Variables** の **DATABASE_URL**（または DB_*）と **View Logs** の起動エラーを確認。
+3. **DevTools でレスポンスヘッダーを確認（任意）**  
+   上記のタブで F12 → **Network** → そのページのリクエストを選択 → **Headers** の **Response Headers** に **`Access-Control-Allow-Origin`** があれば、バックエンドは CORS を返しています。ない場合や 404/502 の場合は、上記 2 のとおり Root Directory と DB 設定を直してください。
+
+---
+
 ## 構成
 
 - **フロントエンド**: 1 サービス（Vite ビルド + nginx で静的配信）

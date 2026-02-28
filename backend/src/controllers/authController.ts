@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
+import { AuthRequest } from '../middleware/auth';
 import { UserModel } from '../models/User';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -154,9 +155,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getProfile = async (req: Request, res: Response): Promise<void> => {
+export const getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.userId;
+    if (userId == null) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
     const user = await UserModel.findById(userId);
 
     if (!user) {
