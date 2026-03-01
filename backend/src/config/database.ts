@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Railway で Postgres を接続すると DATABASE_URL が設定されることがある
-const databaseUrl = process.env.DATABASE_URL;
+// Railway では DATABASE_URL または DATABASE_URI が設定されることがある
+const databaseUrl = process.env.DATABASE_URL || process.env.DATABASE_URI;
 const poolConfig: PoolConfig = {
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,

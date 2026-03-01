@@ -3,11 +3,11 @@ FROM node:18-alpine AS builder
 # 作業ディレクトリを設定
 WORKDIR /app
 
-# パッケージファイルをコピー
+# パッケージファイルをコピー（package-lock.json をコミットしておくこと）
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# すべての依存関係をインストール（ビルドに開発依存関係が必要）
+# 依存関係をインストール（ビルドに開発依存関係が必要）
 RUN npm ci && npm cache clean --force
 
 # ソースコードをコピー

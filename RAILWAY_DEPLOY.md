@@ -162,9 +162,9 @@
 
 バックエンドは次の **どちらか** で接続します。
 
-- **`DATABASE_URL` を使う（推奨）**  
-  Railway で Postgres をバックエンドに「接続」すると、**`DATABASE_URL`** が自動で入ることがあります。その場合は **Variables に `DATABASE_URL` が含まれているか** を確認するだけでOKです（追加で `DB_*` は不要）。  
-  手動で入れる場合: Postgres の **Variables** または **Connect** で表示される接続文字列をコピーし、バックエンドの Variables に **`DATABASE_URL`** として追加します。
+- **`DATABASE_URL` または `DATABASE_URI` を使う（推奨）**  
+  Railway で Postgres をバックエンドに「接続」すると、**`DATABASE_URL`** や **`DATABASE_URI`** が自動で入ることがあります。バックエンドのコードは **どちらの変数名にも対応**しています。Variables にいずれかが含まれていればOKです（追加で `DB_*` は不要）。  
+  手動で入れる場合: Postgres の **Variables** または **Connect** で表示される接続文字列をコピーし、**`DATABASE_URL`** または **`DATABASE_URI`** として追加します。
 
 - **`DB_HOST` など個別変数**  
   `DATABASE_URL` がない場合は、次を追加します:
