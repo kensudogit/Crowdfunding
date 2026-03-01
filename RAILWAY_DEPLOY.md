@@ -44,7 +44,39 @@
 
 - **フロントエンド**: 1 サービス（Vite ビルド + nginx で静的配信）
 - **バックエンド**: 1 サービス（Express API）
-- **Postgres**: Railway の Postgres を追加するか、別サービスで利用
+- **Postgres**: **Railway で DB サービスを 1 つ追加する必要があります**（下記手順参照）
+
+### ローカル Docker と Railway の違い
+
+| 環境 | DB の扱い |
+|------|------------|
+| **ローカル（docker-compose）** | Postgres が 1 コンテナとして同じ `docker-compose.yml` に含まれており、バックエンド・フロント・pgAdmin と一緒に起動する。 |
+| **Railway** | DB は**別サービス**です。アプリ用のサービス（フロント・バックエンド）だけでは DB は動きません。**Postgres サービスをプロジェクトに追加**し、バックエンドの Variables で接続情報を設定する必要があります。 |
+
+---
+
+## Railway で DB サービス（Postgres）を作成する手順
+
+Railway にデプロイする場合、**必ず Postgres を 1 サービスとして追加**してください。
+
+1. **プロジェクトのダッシュボードを開く**  
+   Crowdfunding 用の Railway プロジェクトを開く。
+
+2. **「+ New」でサービスを追加**  
+   画面上の **「+ New」** をクリックし、**「Database」** または **「Add Plugin」** から **「PostgreSQL」** を選択する。  
+   （表示名は「Postgres」や「PostgreSQL」など。Railway の画面に応じて「Database」→「PostgreSQL」を選ぶ。）
+
+3. **Postgres サービスが作成される**  
+   作成されると、左のサービス一覧に **Postgres** が表示され、Variables に接続用の変数（`PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD` や `DATABASE_URL` など）が自動で入ります。
+
+4. **バックエンドに接続情報を渡す**  
+   - **方法 A（推奨）:** バックエンドのサービス画面で **「Variables」** を開き、**「Connect」** や **「Add Reference」** などで **Postgres を選択**すると、`DATABASE_URL` や `DATABASE_URI` が自動でバックエンドに追加されます。  
+   - **方法 B:** Postgres の **Variables** または **Connect** で表示される接続 URL をコピーし、バックエンドの Variables に **`DATABASE_URL`** または **`DATABASE_URI`** として手動で追加する。
+
+5. **テーブルの初期化**  
+   Railway の Postgres は**空のデータベース**なので、**`database/init/01_init.sql` を 1 回実行**してテーブル（users, projects, pledges, comments）を作成する。手順は本ドキュメントの「Database connection error」の節および `TROUBLESHOOTING_RAILWAY.md` を参照。
+
+以上で、Railway 上でも「DB サービス + バックエンド + フロント」の構成が揃います。
 
 ## Generate Domain（デフォルトドメイン）の手順
 
