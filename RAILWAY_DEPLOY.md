@@ -74,7 +74,8 @@ Railway にデプロイする場合、**必ず Postgres を 1 サービスとし
    - **方法 B:** Postgres の **Variables** または **Connect** で表示される接続 URL をコピーし、バックエンドの Variables に **`DATABASE_URL`** または **`DATABASE_URI`** として手動で追加する。
 
 5. **テーブルの初期化**  
-   Railway の Postgres は**空のデータベース**なので、**`database/init/01_init.sql` を 1 回実行**してテーブル（users, projects, pledges, comments）を作成する。手順は本ドキュメントの「Database connection error」の節および `TROUBLESHOOTING_RAILWAY.md` を参照。
+   バックエンドは**起動時にテーブルが無い場合、自動でスキーマ（users, projects, pledges, comments）を作成します**。初回デプロイ後、そのまま登録・一覧が使えるはずです。  
+   まだ「relation "projects" does not exist」などが出る場合は、本ドキュメントの「Database connection error」の節および `TROUBLESHOOTING_RAILWAY.md` を参照し、手動で `database/init/01_init.sql` を 1 回実行してください。
 
 以上で、Railway 上でも「DB サービス + バックエンド + フロント」の構成が揃います。
 
@@ -198,8 +199,9 @@ Railway にデプロイする場合、**必ず Postgres を 1 サービスとし
   Railway で Postgres をバックエンドに「接続」すると、**`DATABASE_URL`** や **`DATABASE_URI`** が自動で入ることがあります。バックエンドのコードは **どちらの変数名にも対応**しています。Variables にいずれかが含まれていればOKです（追加で `DB_*` は不要）。  
   手動で入れる場合: Postgres の **Variables** または **Connect** で表示される接続文字列をコピーし、**`DATABASE_URL`** または **`DATABASE_URI`** として追加します。
 
-- **「Database connection error」や 503 が出る・メッセージに「tables not initialized」と出る**  
-  接続はできているが **テーブルがまだない**状態です。Railway の Postgres は空の DB なので、**初期 SQL（`database/init/01_init.sql`）を 1 回実行**する必要があります。  
+- **「Database connection error」や 503、「relation "projects" does not exist」が出る**  
+  接続はできているが **テーブルがまだない**状態です。通常は**バックエンドの起動時にスキーマが自動作成**されます。再デプロイしてログに「Init schema completed.」が出るか確認してください。  
+  それでも解消しない場合は、**初期 SQL（`database/init/01_init.sql`）を手動で 1 回実行**してください。  
   **Railway の画面上には SQL を実行するエディタはありません。** 次のいずれかで実行してください。
 
   **方法 A: ターミナルで psql を使う（推奨）**  

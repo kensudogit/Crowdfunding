@@ -113,10 +113,10 @@ const startServer = async () => {
       }
     });
 
-    // データベース接続をテスト（非ブロッキング）
+    // データベース接続をテストし、テーブルが無ければスキーマを自動作成（非ブロッキング）
     setTimeout(async () => {
       try {
-        const { testConnection } = await import('./config/database');
+        const { testConnection, ensureSchema } = await import('./config/database');
         const isConnected = await testConnection();
         
         if (!isConnected) {
@@ -128,10 +128,20 @@ const startServer = async () => {
               console.error('  Server is still running, but database operations will fail.');
             } else {
               console.log('✓ Database connection established after retry.');
+              try {
+                await ensureSchema();
+              } catch (e) {
+                console.error('✗ Schema init failed:', e);
+              }
             }
           }, 5000);
         } else {
           console.log('✓ Database connection successful.');
+          try {
+            await ensureSchema();
+          } catch (e) {
+            console.error('✗ Schema init failed:', e);
+          }
         }
       } catch (error) {
         console.error('✗ Error during database connection test:', error);

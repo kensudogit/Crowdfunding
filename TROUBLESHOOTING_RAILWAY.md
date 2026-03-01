@@ -67,17 +67,18 @@ https://crowdfunding-backend-production.up.railway.app/
 
 ---
 
-## 「Database connection error」・503 が出る場合
+## 「Database connection error」・503・「relation "projects" does not exist」が出る場合
 
-バックエンドは動いているが、登録やログインで **503** と「Database connection error」が出る場合、**DB 接続はできているがテーブルがまだない**可能性があります。
+バックエンドは動いているが、登録やログインで **503** や「relation "projects" does not exist」が出る場合、**DB 接続はできているがテーブルがまだない**可能性があります。
 
 1. **バックエンドの Variables** で **`DATABASE_URL` または `DATABASE_URI`** が設定されているか確認する（前出の「データベース用の変数」を参照）。
-2. **Railway の Postgres** に対して、**`database/init/01_init.sql`** を 1 回実行する。  
+2. **まず再デプロイ**する。バックエンドは起動時にテーブルが無ければ**自動でスキーマを作成**します。デプロイログに「Init schema completed.」が出れば成功です。
+3. それでも解消しない場合、**Railway の Postgres** に対して **`database/init/01_init.sql`** を手動で 1 回実行する。  
    - **Railway の画面上には SQL 実行画面はありません。** Postgres サービス → **「Connect」** を開き、表示される **psql コマンド** と **Connection URL** を使う。  
    - **ターミナル:** Connect の「Raw」の `psql` コマンドで接続し、`psql ... -d railway -f "Crowdfunding\database\init\01_init.sql"` のようにファイルを指定して実行。  
    - **GUI（DBeaver 等）:** Connection URL で接続し、クエリ画面に `01_init.sql` の内容を貼り付けて実行。  
    - 詳細は **`RAILWAY_DEPLOY.md`** の「Database connection error」の節を参照。
-3. 実行後、再度登録を試す。
+4. 実行後、再度登録を試す。
 
 詳しい説明は **`RAILWAY_DEPLOY.md`** を参照してください。
 
