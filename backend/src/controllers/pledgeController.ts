@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { PledgeModel } from '../models/Pledge';
 import { ProjectModel } from '../models/Project';
@@ -46,7 +46,7 @@ export const createPledge = async (req: AuthRequest, res: Response): Promise<voi
   }
 };
 
-export const getProjectPledges = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getProjectPledges = async (req: Request, res: Response): Promise<void> => {
   try {
     const projectId = parseInt(req.params.projectId);
     const pledges = await PledgeModel.findByProject(projectId);

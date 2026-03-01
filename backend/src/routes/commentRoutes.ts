@@ -11,7 +11,7 @@ import { authenticate } from '../middleware/auth';
 
 const router = Router();
 
-router.get('/project/:projectId', authenticate, getProjectComments);
+router.get('/project/:projectId', getProjectComments);
 router.post('/project/:projectId', authenticate, validateCreateComment, createComment);
 router.put('/:commentId', authenticate, validateUpdateComment, updateComment);
 router.delete('/:commentId', authenticate, deleteComment);

@@ -26,23 +26,69 @@ export interface CreateProjectData {
   end_date: Date;
 }
 
-export class ProjectModel {
-  static async findAll(limit: number = 50, offset: number = 0, status?: string): Promise<Project[]> {
-    let query = 'SELECT * FROM projects';
-    const params: any[] = [];
+export type ProjectSort = 'newest' | 'most_funded' | 'ending_soon';
 
-    if (status) {
-      query += ' WHERE status = $1';
-      params.push(status);
-      query += ' ORDER BY created_at DESC LIMIT $2 OFFSET $3';
-      params.push(limit, offset);
-    } else {
-      query += ' ORDER BY created_at DESC LIMIT $1 OFFSET $2';
-      params.push(limit, offset);
+export class ProjectModel {
+  static async findAll(
+    limit: number = 50,
+    offset: number = 0,
+    opts?: { status?: string; search?: string; category?: string; sort?: ProjectSort }
+  ): Promise<Project[]> {
+    const conditions: string[] = [];
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (opts?.status) {
+      conditions.push(`status = $${paramIndex++}`);
+      params.push(opts.status);
+    }
+    if (opts?.search && opts.search.trim()) {
+      conditions.push(`(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`);
+      params.push(`%${opts.search.trim()}%`);
+      paramIndex++;
+    }
+    if (opts?.category && opts.category.trim()) {
+      conditions.push(`category = $${paramIndex++}`);
+      params.push(opts.category.trim());
     }
 
+    const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+    let orderClause = ' ORDER BY created_at DESC';
+    if (opts?.sort === 'most_funded') {
+      orderClause = ' ORDER BY current_amount DESC, created_at DESC';
+    } else if (opts?.sort === 'ending_soon') {
+      orderClause = ' ORDER BY end_date ASC, created_at DESC';
+    }
+
+    const query = `SELECT * FROM projects${whereClause}${orderClause} LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
     const result = await pool.query(query, params);
     return result.rows;
+  }
+
+  static async countAll(opts?: { status?: string; search?: string; category?: string }): Promise<number> {
+    const conditions: string[] = [];
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (opts?.status) {
+      conditions.push(`status = $${paramIndex++}`);
+      params.push(opts.status);
+    }
+    if (opts?.search && opts.search.trim()) {
+      conditions.push(`(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`);
+      params.push(`%${opts.search.trim()}%`);
+      paramIndex++;
+    }
+    if (opts?.category && opts.category.trim()) {
+      conditions.push(`category = $${paramIndex++}`);
+      params.push(opts.category.trim());
+    }
+
+    const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+    const result = await pool.query(`SELECT COUNT(*) as total FROM projects${whereClause}`, params);
+    return parseInt(result.rows[0]?.total || '0', 10);
   }
 
   static async findById(id: number): Promise<Project | null> {

@@ -35,6 +35,12 @@
   font-weight: 500;
 }
 
+.form-group .form-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {

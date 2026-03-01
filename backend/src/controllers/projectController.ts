@@ -8,11 +8,20 @@ export const getAllProjects = async (req: Request, res: Response): Promise<void>
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const status = req.query.status as string | undefined;
+    const search = req.query.search as string | undefined;
+    const category = req.query.category as string | undefined;
+    const sort = (req.query.sort as string) || 'newest';
+    const validSort = ['newest', 'most_funded', 'ending_soon'].includes(sort)
+      ? (sort as 'newest' | 'most_funded' | 'ending_soon')
+      : 'newest';
     const offset = (page - 1) * limit;
 
-    const projects = await ProjectModel.findAll(limit, offset, status);
+    const opts = { status, search, category, sort: validSort };
+    const [projects, total] = await Promise.all([
+      ProjectModel.findAll(limit, offset, opts),
+      ProjectModel.countAll({ status, search, category }),
+    ]);
 
-    // プロジェクト作成者情報と支援者数を取得
     const projectsWithCreator = await Promise.all(
       projects.map(async (project) => {
         const pool = (await import('../config/database')).default;
@@ -36,7 +45,7 @@ export const getAllProjects = async (req: Request, res: Response): Promise<void>
       projects: projectsWithCreator,
       page,
       limit,
-      total: projects.length,
+      total,
     });
   } catch (error) {
     console.error('Get projects error:', error);
@@ -185,12 +194,30 @@ export const validateCreateProject = [
   body('title').trim().isLength({ min: 3, max: 255 }).withMessage('Title must be 3-255 characters'),
   body('description').trim().isLength({ min: 10 }).withMessage('Description must be at least 10 characters'),
   body('goal_amount').isFloat({ min: 1 }).withMessage('Goal amount must be a positive number'),
-  body('end_date').isISO8601().withMessage('End date must be a valid date'),
+  body('end_date')
+    .isISO8601()
+    .withMessage('End date must be a valid date')
+    .custom((value) => {
+      if (new Date(value) <= new Date()) {
+        throw new Error('End date must be in the future');
+      }
+      return true;
+    }),
+  body('image_url').optional({ values: 'falsy' }).isURL().withMessage('Image URL must be a valid URL'),
 ];
 
 export const validateUpdateProject = [
   body('title').optional().trim().isLength({ min: 3, max: 255 }),
   body('description').optional().trim().isLength({ min: 10 }),
   body('goal_amount').optional().isFloat({ min: 1 }),
-  body('end_date').optional().isISO8601(),
+  body('end_date')
+    .optional()
+    .isISO8601()
+    .custom((value) => {
+      if (value && new Date(value) <= new Date()) {
+        throw new Error('End date must be in the future');
+      }
+      return true;
+    }),
+  body('image_url').optional({ values: 'falsy' }).isURL().withMessage('Image URL must be a valid URL'),
 ];

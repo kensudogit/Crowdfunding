@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { CommentModel } from '../models/Comment';
 import { ProjectModel } from '../models/Project';
@@ -48,7 +48,7 @@ export const createComment = async (req: AuthRequest, res: Response): Promise<vo
   }
 };
 
-export const getProjectComments = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getProjectComments = async (req: Request, res: Response): Promise<void> => {
   try {
     const projectId = parseInt(req.params.projectId);
     const comments = await CommentModel.findByProject(projectId);

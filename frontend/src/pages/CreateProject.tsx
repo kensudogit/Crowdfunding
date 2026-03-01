@@ -45,7 +45,9 @@ export const CreateProject = () => {
       });
       navigate(`/projects/${project.id}`);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'プロジェクト作成に失敗しました');
+      const data = err.response?.data;
+      const firstMsg = data?.errors?.[0]?.msg;
+      setError(firstMsg || data?.error || 'プロジェクト作成に失敗しました');
     } finally {
       setLoading(false);
     }
@@ -146,6 +148,7 @@ export const CreateProject = () => {
             required
             min={new Date().toISOString().split('T')[0]}
           />
+          <p className="form-hint">終了日は今日より後の日付を指定してください。</p>
         </div>
 
         <button type="submit" disabled={loading} className="submit-btn">

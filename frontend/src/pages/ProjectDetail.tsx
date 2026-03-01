@@ -16,6 +16,18 @@ export const ProjectDetail = () => {
   const [pledgeAmount, setPledgeAmount] = useState('');
   const [commentContent, setCommentContent] = useState('');
   const [showPledgeForm, setShowPledgeForm] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      alert('リンクのコピーに失敗しました');
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -116,7 +128,18 @@ export const ProjectDetail = () => {
           <img src={project.image_url} alt={project.title} className="project-hero-image" />
         )}
         <div className="project-info">
-          <h1>{project.title}</h1>
+          <div className="project-title-row">
+            <h1>{project.title}</h1>
+            <button
+              type="button"
+              onClick={handleShare}
+              className="project-share-btn"
+              title="リンクをコピー"
+              aria-label="リンクをコピー"
+            >
+              {shareCopied ? '✓ コピーしました' : '共有'}
+            </button>
+          </div>
           <div className="project-creator-info">
             <span>作成者: {project.creator?.username || 'Unknown'}</span>
             {project.category && (

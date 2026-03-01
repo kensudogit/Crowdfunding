@@ -114,9 +114,13 @@ export const authAPI = {
 
 // プロジェクトAPI
 export const projectAPI = {
-  getAll: async (page: number = 1, limit: number = 20, status?: string) => {
+  getAll: async (
+    page: number = 1,
+    limit: number = 20,
+    opts?: { status?: string; search?: string; category?: string; sort?: string }
+  ) => {
     const response = await api.get('/projects', {
-      params: { page, limit, status },
+      params: { page, limit, ...opts },
     });
     return response.data;
   },
