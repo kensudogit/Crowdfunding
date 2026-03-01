@@ -107,9 +107,12 @@
 
 .modal-body {
   padding: 1.25rem;
-  overflow-y: auto;
+  overflow: auto;
   flex: 1;
+  min-height: 0;
   -webkit-overflow-scrolling: touch;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .help-section {
@@ -124,11 +127,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
   user-select: none;
   padding: 0.5rem 0;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 0.75rem;
+  min-width: 0;
 }
 
 .section-header:hover {
@@ -146,6 +151,9 @@
   padding-left: 0.75rem;
   line-height: 1.4;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .toggle-btn {
@@ -168,6 +176,9 @@
 .section-content {
   animation: slideDown 0.3s ease-out;
   padding-left: 0.75rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 @keyframes slideDown {

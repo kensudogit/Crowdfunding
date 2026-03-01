@@ -24,9 +24,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     } catch (dbError: any) {
       console.error('Database error during user check:', dbError);
       if (!res.headersSent) {
+        const msg = (dbError?.message || '').toString();
+        const isMissingTable = /relation ["']?users["']? does not exist|does not exist/i.test(msg);
         res.status(503).json({
           error: 'Database connection error',
-          message: 'Please try again later'
+          message: isMissingTable
+            ? 'Database tables not initialized. Run database/init/01_init.sql on your Postgres.'
+            : 'Please try again later'
         });
       }
       return;
@@ -58,9 +62,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     } catch (dbError: any) {
       console.error('Database error during user creation:', dbError);
       if (!res.headersSent) {
+        const msg = (dbError?.message || '').toString();
+        const isMissingTable = /relation ["']?users["']? does not exist|does not exist/i.test(msg);
         res.status(503).json({
           error: 'Database connection error',
-          message: 'Please try again later'
+          message: isMissingTable
+            ? 'Database tables not initialized. Run database/init/01_init.sql on your Postgres.'
+            : 'Please try again later'
         });
       }
       return;
@@ -108,9 +116,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     } catch (dbError: any) {
       console.error('Database error during login:', dbError);
       if (!res.headersSent) {
+        const msg = (dbError?.message || '').toString();
+        const isMissingTable = /relation ["']?users["']? does not exist|does not exist/i.test(msg);
         res.status(503).json({
           error: 'Database connection error',
-          message: 'Please try again later'
+          message: isMissingTable
+            ? 'Database tables not initialized. Run database/init/01_init.sql on your Postgres.'
+            : 'Please try again later'
         });
       }
       return;

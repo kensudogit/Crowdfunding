@@ -65,4 +65,58 @@ https://crowdfunding-backend-production.up.railway.app/
 - 例: `https://crowdfunding-backend-production.up.railway.app`  
   （**フロント**の URL `crowdfunding-production-7caf...` は入れない。）
 
+---
+
+## 「Database connection error」・503 が出る場合
+
+バックエンドは動いているが、登録やログインで **503** と「Database connection error」が出る場合、**DB 接続はできているがテーブルがまだない**可能性があります。
+
+1. **バックエンドの Variables** で **`DATABASE_URL` または `DATABASE_URI`** が設定されているか確認する（前出の「データベース用の変数」を参照）。
+2. **Railway の Postgres** に対して、**`database/init/01_init.sql`** を 1 回実行する。  
+   - **Railway の画面上には SQL 実行画面はありません。** Postgres サービス → **「Connect」** を開き、表示される **psql コマンド** と **Connection URL** を使う。  
+   - **ターミナル:** Connect の「Raw」の `psql` コマンドで接続し、`psql ... -d railway -f "Crowdfunding\database\init\01_init.sql"` のようにファイルを指定して実行。  
+   - **GUI（DBeaver 等）:** Connection URL で接続し、クエリ画面に `01_init.sql` の内容を貼り付けて実行。  
+   - 詳細は **`RAILWAY_DEPLOY.md`** の「Database connection error」の節を参照。
+3. 実行後、再度登録を試す。
+
 詳しい説明は **`RAILWAY_DEPLOY.md`** を参照してください。
+
+---
+
+## ローカル Docker で pgAdmin から接続する場合（Connection refused 対策）
+
+**接続元**によって Host と Port が違います。どちらか一方だけ正しく設定してください。
+
+### パターン A: ブラウザの pgAdmin（http://localhost:8082）を使っている場合
+
+pgAdmin は **Docker コンテナ内**で動いています。ここから「localhost」でつなぐと、**pgAdmin 自身のコンテナ**に接続してしまい、Postgres には届きません。
+
+| 項目 | 設定値 |
+|------|--------|
+| **Host name/address** | **`postgres`**（サービス名。`localhost` は不可） |
+| **Port** | **`5432`**（コンテナ同士の内部ポート） |
+| Maintenance database | `crowdfunding` |
+| Username | `postgres` |
+| Password | `password` |
+
+### パターン B: Windows にインストールした pgAdmin / DBeaver を使っている場合
+
+**ホストの PC** から接続するので、ホストに公開されているポートを使います。
+
+| 項目 | 設定値 |
+|------|--------|
+| **Host name/address** | `localhost` |
+| **Port** | **`5434`**（**5432 ではない**） |
+| Maintenance database | `crowdfunding` |
+| Username | `postgres` |
+| Password | `password` |
+
+### まだつながらないとき（ホストから 5434 を確認）
+
+PowerShell で次を実行し、ポート 5434 が開いているか確認します。
+
+```powershell
+Test-NetConnection -ComputerName localhost -Port 5434
+```
+
+`TcpTestSucceeded : True` ならホストから 5434 は届いています。False の場合は、ファイアウォールや Docker Desktop の設定を確認してください。

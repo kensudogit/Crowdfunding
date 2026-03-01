@@ -166,6 +166,29 @@
   Railway で Postgres をバックエンドに「接続」すると、**`DATABASE_URL`** や **`DATABASE_URI`** が自動で入ることがあります。バックエンドのコードは **どちらの変数名にも対応**しています。Variables にいずれかが含まれていればOKです（追加で `DB_*` は不要）。  
   手動で入れる場合: Postgres の **Variables** または **Connect** で表示される接続文字列をコピーし、**`DATABASE_URL`** または **`DATABASE_URI`** として追加します。
 
+- **「Database connection error」や 503 が出る・メッセージに「tables not initialized」と出る**  
+  接続はできているが **テーブルがまだない**状態です。Railway の Postgres は空の DB なので、**初期 SQL（`database/init/01_init.sql`）を 1 回実行**する必要があります。  
+  **Railway の画面上には SQL を実行するエディタはありません。** 次のいずれかで実行してください。
+
+  **方法 A: ターミナルで psql を使う（推奨）**  
+  1. Railway の **Postgres** サービス → **「Connect」** ボタンをクリック。  
+  2. モーダル内の **「Public Network」** タブで、**「Raw」の `psql` コマンド**をコピー（例: `PGPASSWORD=***** psql -h gondola.proxy.rlwy.net -U postgres -p 46224 -d railway`）。  
+  3. パスワードの **「show」** をクリックして表示し、`*****` の部分を実際のパスワードに置き換えたコマンドをメモ。  
+  4. ローカルでターミナル（PowerShell や CMD）を開き、**プロジェクトのルート**（`Crowdfunding` があるフォルダ）に移動する。  
+  5. 次のように実行する（パスワードとホストは Connect で表示された値に合わせる）:
+     ```powershell
+     $env:PGPASSWORD="ここにConnectで表示したパスワード"
+     psql -h gondola.proxy.rlwy.net -U postgres -p 46224 -d railway -f "Crowdfunding\database\init\01_init.sql"
+     ```
+     （`psql` が入っていない場合は、PostgreSQL をインストールするか、方法 B を使う。）  
+  6. エラーが出ずに終われば成功。フロントから再度登録を試す。
+
+  **方法 B: GUI ツール（DBeaver / pgAdmin など）を使う**  
+  1. **Connect** モーダルの **Connection URL** の **「show」** をクリックして URL をコピー。  
+  2. DBeaver や pgAdmin で「新規接続」を作り、その URL（またはホスト・ポート・DB 名・ユーザー・パスワード）を入力して接続。  
+  3. 「SQL を実行」や「クエリ」ウィンドウを開き、**`database/init/01_init.sql`** の内容をすべて貼り付けて実行。  
+  4. 実行後、フロントから再度登録を試す。
+
 - **`DB_HOST` など個別変数**  
   `DATABASE_URL` がない場合は、次を追加します:
   - `DB_HOST` … 例: `${Postgres.PGHOST}` または Postgres のホスト名
